@@ -13,7 +13,7 @@ import {
   Node,
 } from '@xyflow/react';
 
-import { AgentBaseNode, AgentBaseNodeData } from './components/AgentBaseNode';
+import { AgentBaseNode } from './components/AgentBaseNode';
 
 
 const nodeTypes = {
