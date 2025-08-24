@@ -13,6 +13,12 @@ import {
   Node,
 } from '@xyflow/react';
 
+import { AgentBaseNode, AgentBaseNodeData } from './components/AgentBaseNode';
+
+
+const nodeTypes = {
+  agentBase: AgentBaseNode,
+};
 
 const initialNodes: Node[] = [
   {
@@ -24,9 +30,9 @@ const initialNodes: Node[] = [
   },
   {
     id: '2',
-    data: { label: 'Processing Node' },
+    type: 'agentBase',
+    data: { label: 'Agent Base Node' },
     position: { x: 100, y: 125 },
-    className: 'border-2 border-gray-500 bg-gray-50 rounded-lg p-2 text-sm',
   },
   {
     id: '3',
@@ -51,7 +57,7 @@ const initialEdges: Edge[] = [
 ];
 
 function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = useCallback(
@@ -76,6 +82,7 @@ function App() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        nodeTypes={nodeTypes}
         connectionMode={ConnectionMode.Loose}
         fitView
         className="w-full h-full bg-gray-50"
