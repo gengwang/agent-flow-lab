@@ -20,50 +20,26 @@ const initialNodes: Node[] = [
     type: 'input',
     data: { label: 'Agent Start' },
     position: { x: 250, y: 25 },
-    style: { 
-      background: '#f9fafb', 
-      border: '2px solid #6b7280', 
-      borderRadius: '8px',
-      padding: '10px',
-      fontSize: '12px'
-    },
+    className: 'border-2 border-gray-500 bg-gray-50 rounded-lg p-2 text-sm',
   },
   {
     id: '2',
     data: { label: 'Processing Node' },
     position: { x: 100, y: 125 },
-    style: { 
-      background: '#f9fafb', 
-      border: '2px solid #6b7280', 
-      borderRadius: '8px',
-      padding: '10px',
-      fontSize: '12px'
-    },
+    className: 'border-2 border-gray-500 bg-gray-50 rounded-lg p-2 text-sm',
   },
   {
     id: '3',
     data: { label: 'Decision Node' },
     position: { x: 400, y: 125 },
-    style: { 
-      background: '#f9fafb', 
-      border: '2px solid #6b7280', 
-      borderRadius: '8px',
-      padding: '10px',
-      fontSize: '12px'
-    },
+    className: 'border-2 border-gray-500 bg-gray-50 rounded-lg p-2 text-sm',
   },
   {
     id: '4',
     type: 'output',
     data: { label: 'Agent End' },
     position: { x: 250, y: 250 },
-    style: { 
-      background: '#f9fafb', 
-      border: '2px solid #6b7280', 
-      borderRadius: '8px',
-      padding: '10px',
-      fontSize: '12px'
-    },
+    className: 'border-2 border-gray-500 bg-gray-50 rounded-lg p-2 text-sm',
   },
 ];
 
@@ -84,22 +60,12 @@ function App() {
   );
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <div style={{ 
-        position: 'absolute', 
-        top: '16px', 
-        left: '16px', 
-        zIndex: 10, 
-        background: 'white', 
-        padding: '16px', 
-        borderRadius: '8px', 
-        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)', 
-        border: '1px solid #e5e7eb' 
-      }}>
-        <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>
-          Agent Flow Lab
+    <div className="w-screen h-screen">
+      <div className="absolute top-4 left-4 z-10 bg-white p-4 rounded-lg shadow-lg border border-gray-200">
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">
+          AI Colab
         </h1>
-        <p style={{ color: '#6b7280', fontSize: '14px' }}>
+        <p className="text-gray-600 text-sm">
           Drag to pan • Scroll to zoom • Connect nodes by dragging from handles
         </p>
       </div>
@@ -112,10 +78,10 @@ function App() {
         onConnect={onConnect}
         connectionMode={ConnectionMode.Loose}
         fitView
-        style={{ width: '100%', height: '100%', background: '#f9fafb' }}
+        className="w-full h-full bg-gray-50"
       >
-        <Controls style={{ background: 'white', border: '1px solid #d1d5db', borderRadius: '8px' }} />
-        <MiniMap style={{ background: 'white', border: '1px solid #d1d5db', borderRadius: '8px' }} />
+        <Controls className="bg-white border border-gray-300 rounded-lg shadow-sm" />
+        <MiniMap className="bg-white border border-gray-300 rounded-lg shadow-sm" />
         <Background color="#e2e8f0" gap={16} />
       </ReactFlow>
     </div>
