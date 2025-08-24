@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@xyflow/react": "^12.8.4",
+    "lucide-react": "^0.541.0",
+    "radix-ui": "^1.4.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "reactflow": "^11.11.4",
-    "@xyflow/react": "^12.8.4"
+    "reactflow": "^11.11.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.12",
