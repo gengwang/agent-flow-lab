@@ -93,30 +93,30 @@ const initialNodes: Node[] = [
 ];
 
 const initialEdges: Edge[] = [
-  // Planner to parallel research agents - using bezier for smoother fan-out
-  { id: 'e1-2', source: '1', target: '2', type: 'default' },
-  { id: 'e1-3', source: '1', target: '3', type: 'default' },
-  { id: 'e1-4', source: '1', target: '4', type: 'default' },
-  { id: 'e1-11', source: '1', target: '11', type: 'default' },
+  // Planner to parallel research agents - connecting to 'context' port
+  { id: 'e1-2', source: '1', sourceHandle: 'output', target: '2', targetHandle: 'context', type: 'default' },
+  { id: 'e1-3', source: '1', sourceHandle: 'output', target: '3', targetHandle: 'context', type: 'default' },
+  { id: 'e1-4', source: '1', sourceHandle: 'output', target: '4', targetHandle: 'context', type: 'default' },
+  { id: 'e1-11', source: '1', sourceHandle: 'output', target: '11', targetHandle: 'context', type: 'default' },
   
-  // Research agents directly to Fact Checker - using default for cleaner convergence
-  { id: 'e2-5', source: '2', target: '5', type: 'default' },
-  { id: 'e3-5', source: '3', target: '5', type: 'default' },
-  { id: 'e4-5', source: '4', target: '5', type: 'default' },
-  { id: 'e11-5', source: '11', target: '5', type: 'default' },
+  // Research agents directly to Fact Checker - connecting to 'context' port
+  { id: 'e2-5', source: '2', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default' },
+  { id: 'e3-5', source: '3', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default' },
+  { id: 'e4-5', source: '4', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default' },
+  { id: 'e11-5', source: '11', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default' },
   
-  // Sequential flow - straight for clean horizontal flow
-  { id: 'e5-6', source: '5', target: '6', type: 'default' },
+  // Sequential flow - connecting to 'context' port
+  { id: 'e5-6', source: '5', sourceHandle: 'output', target: '6', targetHandle: 'context', type: 'default' },
   
-  // Analyst to parallel output generators - default for clean fan-out
-  { id: 'e6-7', source: '6', target: '7', type: 'default' },
-  { id: 'e6-8', source: '6', target: '8', type: 'default' },
-  { id: 'e6-9', source: '6', target: '9', type: 'default' },
+  // Analyst to parallel output generators - connecting to 'context' port
+  { id: 'e6-7', source: '6', sourceHandle: 'output', target: '7', targetHandle: 'context', type: 'default' },
+  { id: 'e6-8', source: '6', sourceHandle: 'output', target: '8', targetHandle: 'context', type: 'default' },
+  { id: 'e6-9', source: '6', sourceHandle: 'output', target: '9', targetHandle: 'context', type: 'default' },
   
-  // Output generators to Presenter - default for final convergence
-  { id: 'e7-10', source: '7', target: '10', type: 'default' },
-  { id: 'e8-10', source: '8', target: '10', type: 'default' },
-  { id: 'e9-10', source: '9', target: '10', type: 'default' },
+  // Output generators to Presenter - connecting to 'context' port
+  { id: 'e7-10', source: '7', sourceHandle: 'output', target: '10', targetHandle: 'context', type: 'default' },
+  { id: 'e8-10', source: '8', sourceHandle: 'output', target: '10', targetHandle: 'context', type: 'default' },
+  { id: 'e9-10', source: '9', sourceHandle: 'output', target: '10', targetHandle: 'context', type: 'default' },
 ];
 
 export function FlowViewPage() {
