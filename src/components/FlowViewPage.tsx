@@ -1,16 +1,16 @@
 import { useCallback, useState } from 'react';
 import {
   ReactFlow,
-  addEdge,
-  MiniMap,
-  Controls,
+  ReactFlowProvider,
+  addEdge, Controls,
   Background,
   useNodesState,
   useEdgesState,
+  useReactFlow,
   Connection,
   Edge,
   ConnectionMode,
-  Node,
+  Node
 } from '@xyflow/react';
 
 import { AgentBaseNode } from './AgentBaseNode';
@@ -159,15 +159,60 @@ const initialEdges: Edge[] = [
    
 ];
 
-export function FlowViewPage() {
+function FlowView() {
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [isRunning, setIsRunning] = useState(false);
+  const { fitView, fitBounds } = useReactFlow();
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges],
   );
+
+  // Helper function to get nodes involved in a wave
+  const getNodesFromWave = useCallback((waveEdgeIds: string[]) => {
+    const nodeIds = new Set<string>();
+    
+    waveEdgeIds.forEach(edgeId => {
+      const edge = initialEdges.find(e => e.id === edgeId);
+      if (edge) {
+        nodeIds.add(edge.source);
+        nodeIds.add(edge.target);
+      }
+    });
+    
+    return Array.from(nodeIds).map(id => 
+      initialNodes.find(node => node.id === id)
+    ).filter(Boolean) as Node[];
+  }, []);
+
+  // Helper function to calculate bounding box for nodes
+  const calculateBounds = useCallback((nodes: Node[]) => {
+    if (nodes.length === 0) return null;
+    
+    const padding = 150; // Extra padding around nodes
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    
+    nodes.forEach(node => {
+      const x = node.position.x;
+      const y = node.position.y;
+      const width = 200; // Approximate node width
+      const height = 100; // Approximate node height
+      
+      minX = Math.min(minX, x - padding);
+      minY = Math.min(minY, y - padding);
+      maxX = Math.max(maxX, x + width + padding);
+      maxY = Math.max(maxY, y + height + padding);
+    });
+    
+    return {
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
+    };
+  }, []);
 
   // Define execution waves - groups of edges that animate together
   const executionWaves = [
@@ -197,9 +242,22 @@ export function FlowViewPage() {
       currentEdges.map(edge => ({ ...edge, animated: false }))
     );
 
-    // Process each wave sequentially
+    // Process each wave sequentially with camera following
     for (let waveIndex = 0; waveIndex < executionWaves.length; waveIndex++) {
       const waveEdgeIds = executionWaves[waveIndex];
+      const waveNodes = getNodesFromWave(waveEdgeIds);
+      const bounds = calculateBounds(waveNodes);
+      
+      // Zoom to current wave area
+      if (bounds) {
+        fitBounds(bounds, { 
+          padding: 0.1, 
+          duration: 800
+        });
+        
+        // Wait for camera transition to complete
+        await new Promise(resolve => setTimeout(resolve, 600));
+      }
       
       // Animate edges in current wave
       setEdges(currentEdges => 
@@ -209,7 +267,7 @@ export function FlowViewPage() {
         }))
       );
       
-      // Wait for 0.5 seconds
+      // Wait for animation duration
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       // Turn off animation for current wave
@@ -222,12 +280,19 @@ export function FlowViewPage() {
       
       // Small pause between waves (except for the last wave)
       if (waveIndex < executionWaves.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 300));
       }
     }
     
+    // Zoom out to show full workflow
+    await new Promise(resolve => setTimeout(resolve, 500));
+    fitView({ 
+      duration: 1000,
+      padding: 0.1
+    });
+    
     setIsRunning(false);
-  }, [isRunning, setEdges, executionWaves]);
+  }, [isRunning, setEdges, executionWaves, getNodesFromWave, calculateBounds, fitBounds, fitView]);
 
   return (
     <div className="w-full h-full relative">
@@ -277,5 +342,13 @@ export function FlowViewPage() {
         <Background color="#e2e8f0" gap={16} />
       </ReactFlow>
     </div>
+  );
+}
+
+export function FlowViewPage() {
+  return (
+    <ReactFlowProvider>
+      <FlowView />
+    </ReactFlowProvider>
   );
 }
