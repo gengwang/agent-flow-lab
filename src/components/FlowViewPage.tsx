@@ -22,37 +22,101 @@ const nodeTypes = {
 const initialNodes: Node[] = [
   {
     id: '1',
-    type: 'input',
-    data: { label: 'Agent Start' },
-    position: { x: 250, y: 25 },
-    className: 'border-2 border-gray-500 bg-gray-50 rounded-lg p-2 text-sm',
+    type: 'agentBase',
+    data: { label: 'Planner' },
+    position: { x: 50, y: 150 },
   },
+  // Parallel Research Phase - Spread out for cleaner connections
   {
     id: '2',
     type: 'agentBase',
-    data: { label: 'Agent 1' },
-    position: { x: 100, y: 125 },
+    data: { label: 'Researcher' },
+    position: { x: 300, y: 50 },
   },
   {
     id: '3',
-    data: { label: 'Decision Node' },
-    position: { x: 400, y: 125 },
-    className: 'border-2 border-gray-500 bg-gray-50 rounded-lg p-2 text-sm',
+    type: 'agentBase',
+    data: { label: 'Web Searcher' },
+    position: { x: 300, y: 120 },
   },
   {
     id: '4',
-    type: 'output',
-    data: { label: 'Agent End' },
-    position: { x: 250, y: 250 },
-    className: 'border-2 border-gray-500 bg-gray-50 rounded-lg p-2 text-sm',
+    type: 'agentBase',
+    data: { label: 'Domain Expert 1' },
+    position: { x: 300, y: 190 },
+  },
+  {
+    id: '11',
+    type: 'agentBase',
+    data: { label: 'Domain Expert 2' },
+    position: { x: 300, y: 260 },
+  },
+  // Validation Phase - Centered for multiple inputs
+  {
+    id: '5',
+    type: 'agentBase',
+    data: { label: 'Fact Checker' },
+    position: { x: 580, y: 155 },
+  },
+  // Analysis Phase
+  {
+    id: '6',
+    type: 'agentBase',
+    data: { label: 'Analyst' },
+    position: { x: 780, y: 155 },
+  },
+  // Output Phase - Parallel Outputs with better spacing
+  {
+    id: '7',
+    type: 'agentBase',
+    data: { label: 'Report Writer' },
+    position: { x: 980, y: 70 },
+  },
+  {
+    id: '8',
+    type: 'agentBase',
+    data: { label: 'Presentation Designer' },
+    position: { x: 980, y: 155 },
+  },
+  {
+    id: '9',
+    type: 'agentBase',
+    data: { label: 'Summary Generator' },
+    position: { x: 980, y: 240 },
+  },
+  {
+    id: '10',
+    type: 'agentBase',
+    data: { label: 'Presenter' },
+    position: { x: 1220, y: 155 },
   },
 ];
 
 const initialEdges: Edge[] = [
-  { id: 'e1-2', source: '1', target: '2', type: 'smoothstep' },
-  { id: 'e1-3', source: '1', target: '3', type: 'smoothstep' },
-  { id: 'e2-4', source: '2', target: '4', type: 'smoothstep' },
-  { id: 'e3-4', source: '3', target: '4', type: 'smoothstep' },
+  // Planner to parallel research agents - using bezier for smoother fan-out
+  { id: 'e1-2', source: '1', target: '2', type: 'default' },
+  { id: 'e1-3', source: '1', target: '3', type: 'default' },
+  { id: 'e1-4', source: '1', target: '4', type: 'default' },
+  { id: 'e1-11', source: '1', target: '11', type: 'default' },
+  
+  // Research agents directly to Fact Checker - using default for cleaner convergence
+  { id: 'e2-5', source: '2', target: '5', type: 'default' },
+  { id: 'e3-5', source: '3', target: '5', type: 'default' },
+  { id: 'e4-5', source: '4', target: '5', type: 'default' },
+  { id: 'e11-5', source: '11', target: '5', type: 'default' },
+  
+  // Sequential flow - straight for clean horizontal flow
+  { id: 'e5-6', source: '5', target: '6', type: 'default' },
+  
+  // Analyst to parallel output generators - default for clean fan-out
+  { id: 'e6-7', source: '6', target: '7', type: 'default' },
+  { id: 'e6-8', source: '6', target: '8', type: 'default' },
+  { id: 'e6-9', source: '6', target: '9', type: 'default' },
+  
+  // Output generators to Presenter - default for final convergence
+  { id: 'e7-10', source: '7', target: '10', type: 'default' },
+  { id: 'e8-10', source: '8', target: '10', type: 'default' },
+  { id: 'e9-10', source: '9', target: '10', type: 'default' },
 ];
 
 export function FlowViewPage() {
@@ -78,7 +142,7 @@ export function FlowViewPage() {
         className="w-full h-full bg-gray-50"
       >
         <Controls className="bg-white border border-gray-300 rounded-lg shadow-sm" />
-        <MiniMap className="bg-white border border-gray-300 rounded-lg shadow-sm" />
+        {/* <MiniMap className="bg-white border border-gray-300 rounded-lg shadow-sm" /> */}
         <Background color="#e2e8f0" gap={16} />
       </ReactFlow>
     </div>
