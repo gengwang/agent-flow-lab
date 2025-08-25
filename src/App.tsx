@@ -31,7 +31,7 @@ function App() {
   return (
     <div className="w-screen h-screen flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="bg-white border-b border-gray-100">
         <div className="flex items-center justify-between px-6 py-4">
           <div>
             <h1 className="text-2xl font-semibold text-gray-800">AI Colab</h1>

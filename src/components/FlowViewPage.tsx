@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ReactFlow,
   addEdge,
@@ -122,14 +122,101 @@ const initialEdges: Edge[] = [
 export function FlowViewPage() {
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [isRunning, setIsRunning] = useState(false);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges],
   );
 
+  // Define execution waves - groups of edges that animate together
+  const executionWaves = [
+    // Wave 1: Planner to research agents
+    ['e1-2', 'e1-3', 'e1-4', 'e1-11'],
+    // Wave 2: Research agents to Fact Checker
+    ['e2-5', 'e3-5', 'e4-5', 'e11-5'],
+    // Wave 3: Fact Checker to Analyst
+    ['e5-6'],
+    // Wave 4: Analyst to output generators
+    ['e6-7', 'e6-8', 'e6-9'],
+    // Wave 5: Output generators to Presenter
+    ['e7-10', 'e8-10', 'e9-10'],
+  ];
+
+  const runWorkflow = useCallback(async () => {
+    if (isRunning) return;
+    
+    setIsRunning(true);
+    
+    // Reset all edges to non-animated state first
+    setEdges(currentEdges => 
+      currentEdges.map(edge => ({ ...edge, animated: false }))
+    );
+
+    // Process each wave sequentially
+    for (let waveIndex = 0; waveIndex < executionWaves.length; waveIndex++) {
+      const waveEdgeIds = executionWaves[waveIndex];
+      
+      // Animate edges in current wave
+      setEdges(currentEdges => 
+        currentEdges.map(edge => ({
+          ...edge,
+          animated: waveEdgeIds.includes(edge.id)
+        }))
+      );
+      
+      // Wait for 0.5 seconds
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Turn off animation for current wave
+      setEdges(currentEdges => 
+        currentEdges.map(edge => ({
+          ...edge,
+          animated: false
+        }))
+      );
+      
+      // Small pause between waves (except for the last wave)
+      if (waveIndex < executionWaves.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
+    
+    setIsRunning(false);
+  }, [isRunning, setEdges, executionWaves]);
+
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full relative">
+      {/* Run Button */}
+      <div className="absolute top-4 right-4 z-10">
+        <button
+          onClick={runWorkflow}
+          disabled={isRunning}
+          className={`
+            flex min-w-30 items-center justify-center space-x-2 px-4 py-2 
+            ${isRunning 
+              ? 'bg-gray-500 cursor-not-allowed' 
+              : 'bg-teal-600 hover:bg-teal-700 hover:shadow-xl'
+            }
+            text-white font-medium text-sm 
+            rounded-lg shadow-lg border border-teal-500
+            transition-colors duration-200
+          `}
+        >
+          {isRunning ? (
+            <>
+              <span className="material-symbols-outlined text-lg animate-spin">refresh</span>
+              <span>Running...</span>
+            </>
+          ) : (
+            <>
+              <span className="material-symbols-outlined text-lg">play_arrow</span>
+              <span>Run</span>
+            </>
+          )}
+        </button>
+      </div>
+
       <ReactFlow
         nodes={nodes}
         edges={edges}
