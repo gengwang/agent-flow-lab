@@ -16,173 +16,185 @@ import {
 
 import { AgentBaseNode } from './AgentBaseNode';
 import { TextNode } from './TextNode';
+import { FlowLibraryPanel } from './FlowLibraryPanel';
+import { Flow, FlowTemplate } from '../types/Flow';
+import { getFlowTemplateById } from '../flows/templates';
 
 const nodeTypes = {
   agentBase: AgentBaseNode,
   textNode: TextNode,
 };
 
-const initialNodes: Node[] = [
-  // System prompt for Planner
-  {
-    id: 'system-prompt',
-    type: 'textNode',
-    data: { 
-      label: 'System Prompt', 
-      placeholder: 'Type your prompt here...',
-      text: 'You are a data scientist specializing in experimental design. You are given a project brief and you need to come up with a plan to execute the project.'
-    },
-    position: { x: -250, y: 0 },
-  },
-  // Text input for initial prompt
-  {
-    id: 'text-1',
-    type: 'textNode',
-    data: { 
-      label: 'Project Brief', 
-      placeholder: 'Enter your project requirements and goals...',
-      text: 'How would you A/B test a 1-click job apply feature for LinkedIn?'
-    },
-    position: { x: -250, y: 150 },
-  },
-  // Web Scraper positioned before Planner
-  {
-    id: '3',
-    type: 'agentBase',
-    data: { label: 'Web Scraper' },
-    position: { x: -250, y: 250 },
-  },
-  {
-    id: '1',
-    type: 'agentBase',
-    data: { label: 'Planner' },
-    position: { x: 50, y: 150 },
-  },
-  // Parallel Research Phase - Spread out for cleaner connections
-  {
-    id: '2',
-    type: 'agentBase',
-    data: { label: 'Researcher' },
-    position: { x: 300, y: 50 },
-  },
-  {
-    id: '4',
-    type: 'agentBase',
-    data: { label: 'Domain Expert 1' },
-    position: { x: 300, y: 120 },
-  },
-  {
-    id: '11',
-    type: 'agentBase',
-    data: { label: 'Domain Expert 2' },
-    position: { x: 300, y: 190 },
-  },
-  // Validation Phase - Centered for multiple inputs
-  {
-    id: '5',
-    type: 'agentBase',
-    data: { label: 'Fact Checker' },
-    position: { x: 580, y: 155 },
-  },
-  // Analysis Phase
-  {
-    id: '6',
-    type: 'agentBase',
-    data: { label: 'Analyst' },
-    position: { x: 780, y: 155 },
-  },
-  // Output Phase - Parallel Outputs with better spacing
-  {
-    id: '7',
-    type: 'agentBase',
-    data: { label: 'Report Writer' },
-    position: { x: 980, y: 70 },
-  },
-  {
-    id: '8',
-    type: 'agentBase',
-    data: { label: 'Presentation Designer' },
-    position: { x: 980, y: 155 },
-  },
-  {
-    id: '9',
-    type: 'agentBase',
-    data: { label: 'Summary Generator' },
-    position: { x: 980, y: 240 },
-  },
-  {
-    id: '10',
-    type: 'agentBase',
-    data: { label: 'Presenter' },
-    position: { x: 1220, y: 155 },
-  },
-  {
-    id: '101',
-    type: 'output',
-    data: { label: 'Presentation' },
-    position: { x: 1220, y: 240 },
-  },
-];
-
-const initialEdges: Edge[] = [
-  // System prompt to Planner Rules
-  { id: 'e-system-prompt', source: 'system-prompt', sourceHandle: 'output', target: '1', targetHandle: 'systemPrompt', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  // Text input to Planner
-  { id: 'e-text-1', source: 'text-1', sourceHandle: 'output', target: '1', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  // Web Scraper to Planner Tools
-  { id: 'e3-1', source: '3', sourceHandle: 'output', target: '1', targetHandle: 'tools', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  
-  // Planner to parallel research agents - connecting to 'context' port
-  { id: 'e1-2', source: '1', sourceHandle: 'output', target: '2', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  { id: 'e1-4', source: '1', sourceHandle: 'output', target: '4', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  { id: 'e1-11', source: '1', sourceHandle: 'output', target: '11', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  
-  // Research agents directly to Fact Checker - connecting to 'context' port
-  { id: 'e2-5', source: '2', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  { id: 'e4-5', source: '4', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  { id: 'e11-5', source: '11', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  
-  // Sequential flow - connecting to 'context' port
-  { id: 'e5-6', source: '5', sourceHandle: 'output', target: '6', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  
-  // Analyst to parallel output generators - connecting to 'context' port
-  { id: 'e6-7', source: '6', sourceHandle: 'output', target: '7', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  { id: 'e6-8', source: '6', sourceHandle: 'output', target: '8', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  { id: 'e6-9', source: '6', sourceHandle: 'output', target: '9', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  
-    // Output generators to Presenter - connecting to 'context' port
-  { id: 'e7-10', source: '7', sourceHandle: 'output', target: '10', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  { id: 'e8-10', source: '8', sourceHandle: 'output', target: '10', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  { id: 'e9-10', source: '9', sourceHandle: 'output', target: '10', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-  
-  // Presenter to final Presentation output
-  { id: 'e10-101', source: '10', sourceHandle: 'output', target: '101', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
-   
-];
+// Note: Initial nodes and edges are now defined in flow templates
+// The canvas starts empty and flows are added from the library
 
 function FlowView() {
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [flows, setFlows] = useState<Flow[]>([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
-  const { fitView, fitBounds } = useReactFlow();
+  const { fitView, fitBounds, screenToFlowPosition } = useReactFlow();
   const timerRef = useRef(0);
+  
+  // Flag to control whether to clear existing flows when adding new ones
+  // Set to true for now, but can be changed to false to allow multiple flows
+  const clearFlowsOnAdd = true;
 
   useEffect(() => {
     return () => clearTimeout(timerRef.current);
   }, []);
+
+  // Update React Flow nodes and edges when flows change
+  useEffect(() => {
+    const allNodes = flows.flatMap(flow => flow.getNodes());
+    const allEdges = flows.flatMap(flow => flow.getEdges());
+    setNodes(allNodes);
+    setEdges(allEdges);
+  }, [flows, setNodes, setEdges]);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
     [setEdges],
   );
 
-  // Helper function to get nodes involved in a wave
-  const getNodesFromWave = useCallback((waveEdgeIds: string[]) => {
+  // Add a flow instance from a template
+  const addFlowFromTemplate = useCallback((template: FlowTemplate, position?: { x: number; y: number }) => {
+    const flowPosition = position || { x: 100, y: 100 };
+    const newFlow = new Flow(template, undefined, flowPosition);
+    
+    if (clearFlowsOnAdd) {
+      // Clear existing flows and add the new one
+      setFlows([newFlow]);
+    } else {
+      // Add to existing flows (for multiple flows support)
+      setFlows(prev => [...prev, newFlow]);
+    }
+    
+    // Auto-fit to show the new flow
+    setTimeout(() => {
+      const bounds = calculateFlowBounds(newFlow);
+      if (bounds) {
+        fitBounds(bounds, { padding: 0.1, duration: 800 });
+      }
+    }, 100);
+  }, [clearFlowsOnAdd, fitBounds]);
+
+  // Handle template selection from library (click to add)
+  const handleTemplateSelect = useCallback((template: FlowTemplate) => {
+    // Find a good position for the new flow (avoid overlaps)
+    const position = findAvailablePosition();
+    addFlowFromTemplate(template, position);
+  }, [addFlowFromTemplate]);
+
+  // Handle drag start from library
+  const handleTemplateDragStart = useCallback(() => {
+    // Store template data for drop handling
+    // The actual drag data is handled in FlowLibraryPanel
+  }, []);
+
+  // Handle drop on canvas
+  const handleCanvasDrop = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    
+    try {
+      const dragData = JSON.parse(event.dataTransfer.getData('application/json'));
+      if (dragData.type === 'flow-template') {
+        const template = getFlowTemplateById(dragData.templateId);
+        if (template) {
+          const position = screenToFlowPosition({
+            x: event.clientX,
+            y: event.clientY,
+          });
+          addFlowFromTemplate(template, position);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to handle drop:', error);
+    }
+  }, [addFlowFromTemplate, screenToFlowPosition]);
+
+  const handleCanvasDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+  }, []);
+
+  // Helper function to find an available position for new flows
+  const findAvailablePosition = useCallback(() => {
+    const baseX = 100;
+    const baseY = 100;
+    const spacing = 400; // Space between flows
+    
+    // If clearing flows on add, always return the base position
+    if (clearFlowsOnAdd) {
+      return { x: baseX, y: baseY };
+    }
+    
+    // For multiple flows mode, find non-overlapping position
+    for (let i = 0; i < flows.length + 1; i++) {
+      const x = baseX + (i % 3) * spacing;
+      const y = baseY + Math.floor(i / 3) * spacing;
+      
+      // Check if this position overlaps with existing flows
+      const overlaps = flows.some(flow => {
+        const distance = Math.sqrt(
+          Math.pow(flow.position.x - x, 2) + Math.pow(flow.position.y - y, 2)
+        );
+        return distance < spacing * 0.8; // 80% of spacing to avoid tight overlaps
+      });
+      
+      if (!overlaps) {
+        return { x, y };
+      }
+    }
+    
+    // Fallback: place at the end of the grid
+    const gridIndex = flows.length;
+    return {
+      x: baseX + (gridIndex % 3) * spacing,
+      y: baseY + Math.floor(gridIndex / 3) * spacing,
+    };
+  }, [flows, clearFlowsOnAdd]);
+
+  // Helper function to calculate bounds for a specific flow
+  const calculateFlowBounds = useCallback((flow: Flow) => {
+    const flowNodes = flow.getNodes();
+    if (flowNodes.length === 0) return null;
+    
+    const padding = 50;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    
+    flowNodes.forEach(node => {
+      const x = node.position.x;
+      const y = node.position.y;
+      const width = 200; // Approximate node width
+      const height = 100; // Approximate node height
+      
+      minX = Math.min(minX, x - padding);
+      minY = Math.min(minY, y - padding);
+      maxX = Math.max(maxX, x + width + padding);
+      maxY = Math.max(maxY, y + height + padding);
+    });
+    
+    return {
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY,
+    };
+  }, []);
+
+  // Helper function to get nodes involved in a wave for a specific flow
+  const getNodesFromWave = useCallback((waveEdgeIds: string[], flowId: string) => {
+    const flow = flows.find(f => f.id === flowId);
+    if (!flow) return [];
+    
+    const flowEdges = flow.getEdges();
+    const flowNodes = flow.getNodes();
     const nodeIds = new Set<string>();
     
     waveEdgeIds.forEach(edgeId => {
-      const edge = initialEdges.find(e => e.id === edgeId);
+      const edge = flowEdges.find(e => e.id === edgeId);
       if (edge) {
         nodeIds.add(edge.source);
         nodeIds.add(edge.target);
@@ -190,9 +202,9 @@ function FlowView() {
     });
     
     return Array.from(nodeIds).map(id => 
-      initialNodes.find(node => node.id === id)
+      flowNodes.find(node => node.id === id)
     ).filter(Boolean) as Node[];
-  }, []);
+  }, [flows]);
 
   // Helper function to calculate bounding box for nodes
   const calculateBounds = useCallback((nodes: Node[]) => {
@@ -221,28 +233,19 @@ function FlowView() {
     };
   }, []);
 
-  // Define execution waves - groups of edges that animate together
-  const executionWaves = [
-    // Wave 0: System prompt, text input, and Web Scraper to Planner
-    ['e-system-prompt', 'e-text-1', 'e3-1'],
-    // Wave 1: Planner to research agents
-    ['e1-2', 'e1-4', 'e1-11'],
-    // Wave 2: Research agents to Fact Checker
-    ['e2-5', 'e4-5', 'e11-5'],
-    // Wave 3: Fact Checker to Analyst
-    ['e5-6'],
-    // Wave 4: Analyst to output generators
-    ['e6-7', 'e6-8', 'e6-9'],
-    // Wave 5: Output generators to Presenter
-    ['e7-10', 'e8-10', 'e9-10'],
-    // Wave 6: Presenter to final Presentation
-    ['e10-101'],
-  ];
-
-  const runWorkflow = useCallback(async () => {
+  const runWorkflow = useCallback(async (flowId?: string) => {
     if (isRunning) return;
     
     setIsRunning(true);
+    
+    // If no specific flow ID provided, run the first available flow
+    const targetFlow = flowId ? flows.find(f => f.id === flowId) : flows[0];
+    if (!targetFlow) {
+      setIsRunning(false);
+      return;
+    }
+    
+    const executionWaves = targetFlow.getExecutionWaves();
     
     // Reset all edges to non-animated state first
     setEdges(currentEdges => 
@@ -253,10 +256,13 @@ function FlowView() {
       }))
     );
 
+    // Update flow status
+    targetFlow.updateStatus('running');
+
     // Process each wave sequentially with camera following
     for (let waveIndex = 0; waveIndex < executionWaves.length; waveIndex++) {
       const waveEdgeIds = executionWaves[waveIndex];
-      const waveNodes = getNodesFromWave(waveEdgeIds);
+      const waveNodes = getNodesFromWave(waveEdgeIds, targetFlow.id);
       const bounds = calculateBounds(waveNodes);
       
       // Zoom to current wave area
@@ -299,6 +305,9 @@ function FlowView() {
       }
     }
     
+    // Update flow status
+    targetFlow.updateStatus('completed');
+    
     // Zoom out to show full workflow
     await new Promise(resolve => setTimeout(resolve, 500));
     fitView({ 
@@ -314,75 +323,111 @@ function FlowView() {
     timerRef.current = window.setTimeout(() => {
       setToastOpen(true);
     }, 100);
-  }, [isRunning, setEdges, executionWaves, getNodesFromWave, calculateBounds, fitBounds, fitView]);
+  }, [isRunning, flows, setEdges, getNodesFromWave, calculateBounds, fitBounds, fitView]);
 
   return (
     <Toast.Provider swipeDirection="right">
-      <div className="w-full h-full relative">
-        {/* Run Button */}
-      <div className="absolute top-4 right-4 z-10">
-        <button
-          onClick={runWorkflow}
-          disabled={isRunning}
-          className={`
-            flex min-w-30 items-center justify-center space-x-2 px-4 py-2 
-            ${isRunning 
-              ? 'bg-teal-400/30 cursor-not-allowed shadow-none' 
-              : 'bg-teal-600 hover:bg-teal-700 hover:shadow-xl'
-            }
-            text-teal-100 font-medium text-sm 
-            rounded-full shadow-lg border border-teal-500/30
-            transition-all duration-200
-          `}
-        >
-          {isRunning ? (
-            <>
-              <span className="material-symbols-outlined text-lg animate-spin text-teal-600">refresh</span>
-              <span className="text-teal-600">Running...</span>
-            </>
-          ) : (
-            <>
-              <span className="material-symbols-outlined text-lg">play_arrow</span>
-              <span>Run</span>
-            </>
-          )}
-        </button>
-      </div>
+      <div className="w-full h-full flex">
+        {/* Flow Library Panel */}
+        <FlowLibraryPanel 
+          onTemplateSelect={handleTemplateSelect}
+          onTemplateDragStart={handleTemplateDragStart}
+          className="w-80 flex-shrink-0"
+        />
+        
+        {/* Canvas Area */}
+        <div className="flex-1 relative">
+          {/* Run Button */}
+          <div className="absolute top-4 right-4 z-10">
+            <button
+              onClick={() => runWorkflow()}
+              disabled={isRunning || flows.length === 0}
+              className={`
+                flex min-w-30 items-center justify-center space-x-2 px-4 py-2 
+                ${isRunning || flows.length === 0
+                  ? 'bg-teal-400/30 cursor-not-allowed shadow-none' 
+                  : 'bg-teal-600 hover:bg-teal-700 hover:shadow-xl'
+                }
+                text-teal-100 font-medium text-sm 
+                rounded-full shadow-lg border border-teal-500/30
+                transition-all duration-200
+              `}
+            >
+              {isRunning ? (
+                <>
+                  <span className="material-symbols-outlined text-lg animate-spin text-teal-600">refresh</span>
+                  <span className="text-teal-600">Running...</span>
+                </>
+              ) : (
+                <>
+                  <span className="material-symbols-outlined text-lg">play_arrow</span>
+                  <span>Run</span>
+                </>
+              )}
+            </button>
+          </div>
 
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        connectionMode={ConnectionMode.Loose}
-        fitView
-        className="w-full h-full bg-gray-50"
-      >
-        <Controls className="bg-white border border-gray-300 rounded-lg shadow-sm" />
-        {/* <MiniMap className="bg-white border border-gray-300 rounded-lg shadow-sm" /> */}
-        <Background color="#e2e8f0" gap={16} />
-      </ReactFlow>
-      
-      {/* Success Toast */}
-      <Toast.Root 
-        className="bg-teal-600 text-white p-4 rounded-lg shadow-lg border border-teal-500/50 flex items-center space-x-3"
-        open={toastOpen} 
-        onOpenChange={setToastOpen}
-      >
-        <span className="material-symbols-outlined !text-2xl">celebration</span>
-        <div>
-          <Toast.Title className="font-medium text-sm">
-            Workflow Complete!
-          </Toast.Title>
-          <Toast.Description className="text-xs text-blue-50 mt-1">
-            Your AI agent workflow has finished successfully.
-          </Toast.Description>
+          {/* Empty State */}
+          {flows.length === 0 && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+              <div className="text-center">
+                <span className="material-symbols-outlined text-6xl text-gray-300 mb-4 block">
+                  account_tree
+                </span>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No flows on canvas
+                </h3>
+                <p className="text-gray-500 mb-4 max-w-sm">
+                  Select a flow template from the library to get started, or drag and drop one onto the canvas.
+                </p>
+                <div className="flex items-center justify-center space-x-2 text-sm text-gray-400">
+                  <span>Drag</span>
+                  <span className="material-symbols-outlined text-base">drag_indicator</span>
+                  <span>or</span>
+                  <span className="material-symbols-outlined text-base">mouse</span>
+                  <span>click to add</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* React Flow Canvas */}
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onDrop={handleCanvasDrop}
+            onDragOver={handleCanvasDragOver}
+            nodeTypes={nodeTypes}
+            connectionMode={ConnectionMode.Loose}
+            fitView={flows.length > 0}
+            className="w-full h-full bg-gray-50"
+          >
+            <Controls className="bg-white border border-gray-300 rounded-lg shadow-sm" />
+            <Background color="#e2e8f0" gap={16} />
+          </ReactFlow>
         </div>
-      </Toast.Root>
-      <Toast.Viewport className="fixed top-[54px] right-4 z-50 w-80" />
-    </div>
+      
+        {/* Success Toast */}
+        <Toast.Root 
+          className="bg-teal-600 text-white p-4 rounded-lg shadow-lg border border-teal-500/50 flex items-center space-x-3"
+          open={toastOpen} 
+          onOpenChange={setToastOpen}
+        >
+          <span className="material-symbols-outlined !text-2xl">celebration</span>
+          <div>
+            <Toast.Title className="font-medium text-sm">
+              Workflow Complete!
+            </Toast.Title>
+            <Toast.Description className="text-xs text-blue-50 mt-1">
+              Your AI agent workflow has finished successfully.
+            </Toast.Description>
+          </div>
+        </Toast.Root>
+        <Toast.Viewport className="fixed top-[54px] right-4 z-50 w-80" />
+      </div>
     </Toast.Provider>
   );
 }
