@@ -26,9 +26,9 @@ export function TextNode({ data, selected }: NodeProps) {
     return (
       <div 
         className={`
-          bg-blue-100 backdrop-blur border-2 shadow min-w-32 px-4 py-2 relative cursor-pointer
-          ${selected ? 'border-blue-600' : 'border-blue-400'}
-          hover:border-blue-500 
+          bg-indigo-100 backdrop-blur border-2 shadow min-w-32 px-4 py-2 relative cursor-pointer
+          ${selected ? 'border-indigo-600' : 'border-indigo-400'}
+          hover:border-indigo-500 
           rounded-lg
         `}
       >
@@ -38,7 +38,7 @@ export function TextNode({ data, selected }: NodeProps) {
           position={Position.Left}
           id="input"
           style={{
-            background: '#3b82f6',
+            background: '#6366f1',
             left: '-1px',
           }}
           className="w-3 h-3"
@@ -46,7 +46,7 @@ export function TextNode({ data, selected }: NodeProps) {
         
         {/* Collapsed content */}
         <div className="text-xs text-gray-700 text-center flex items-center justify-center">
-          <span className="mr-2 material-symbols-outlined text-blue-600 cursor-pointer" onClick={toggleExpanded}>
+          <span className="mr-2 material-symbols-outlined text-indigo-600 cursor-pointer" onClick={toggleExpanded}>
             keyboard_arrow_right
           </span>
           <span className="truncate">{nodeData.label || 'Text'}</span>
@@ -57,7 +57,7 @@ export function TextNode({ data, selected }: NodeProps) {
           type="source"
           position={Position.Right}
           id="output"
-          style={{ background: '#3b82f6' }}
+          style={{ background: '#6366f1' }}
           className="w-3 h-3"
         />
       </div>
@@ -68,9 +68,9 @@ export function TextNode({ data, selected }: NodeProps) {
   return (
     <div 
       className={`
-        bg-blue-50 backdrop-blur border-2 rounded-lg shadow min-w-64 p-0 relative
-        ${selected ? 'border-blue-600' : 'border-blue-400'}
-        hover:border-blue-500
+        bg-indigo-50 backdrop-blur border-2 rounded-lg shadow min-w-64 p-0 relative
+        ${selected ? 'border-indigo-600' : 'border-indigo-400'}
+        hover:border-indigo-500
       `}
     >
       {/* Input Handle */}
@@ -79,7 +79,7 @@ export function TextNode({ data, selected }: NodeProps) {
         position={Position.Left}
         id="input"
         style={{
-          background: '#3b82f6',
+          background: '#6366f1',
           top: '50%',
           left: '-1px',
           transform: 'translateY(-50%)',
@@ -88,8 +88,8 @@ export function TextNode({ data, selected }: NodeProps) {
       />
 
       {/* Header */}
-      <div className="text-xs bg-blue-200 text-gray-800 mb-0 flex items-center px-2 py-1 rounded-t-lg">
-        <span className="material-symbols-outlined cursor-pointer text-blue-600 mr-1" onClick={toggleExpanded}>
+      <div className="text-xs bg-indigo-200 text-gray-800 mb-0 flex items-center px-2 py-1 rounded-t-lg">
+        <span className="material-symbols-outlined cursor-pointer text-indigo-600 mr-1" onClick={toggleExpanded}>
           keyboard_arrow_down
         </span>
         <span>{nodeData.label || 'Text'}</span>
@@ -103,8 +103,8 @@ export function TextNode({ data, selected }: NodeProps) {
           placeholder={nodeData.placeholder || 'Enter your text here...'}
           className="
             w-full h-24 p-2 text-xs
-            border border-blue-300 rounded
-            resize-none focus:outline-none focus:border-blue-500
+            border border-indigo-300 rounded
+            resize-none focus:outline-none focus:border-indigo-500
             bg-white text-gray-700
           "
           onClick={(e) => e.stopPropagation()} // Prevent node selection when clicking in textarea
@@ -117,7 +117,7 @@ export function TextNode({ data, selected }: NodeProps) {
         position={Position.Right}
         id="output"
         style={{ 
-          background: '#3b82f6',
+          background: '#6366f1',
           top: '50%',
           transform: 'translateY(-50%)'
         }}

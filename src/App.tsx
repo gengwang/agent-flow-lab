@@ -31,17 +31,17 @@ function App() {
   return (
     <div className="w-screen h-screen flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-teal-500/10 border-b border-teal-100">
         <div className="flex items-center justify-between px-6 py-4">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-800">AI Colab</h1>
-            <p className="text-gray-600 text-sm">
+            <h1 className="text-2xl font-semibold text-teal-800">AI Colab</h1>
+            <p className="text-teal-700 text-sm">
               Plan, search, and build, together with your AI team.
             </p>
           </div>
           
           {/* Tab Navigation */}
-          <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+          <div className="flex space-x-1 bg-teal-50 p-1 rounded-lg border border-teal-100">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -50,12 +50,14 @@ function App() {
                   flex items-center space-x-2 px-3 py-1 rounded-md text-sm font-medium transition-colors
                   ${
                     activeTab === tab.id
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                      ? 'bg-teal-500 text-white shadow-sm'
+                      : 'text-teal-600 hover:text-teal-800 hover:bg-teal-100'
                   }
                 `}
               >
-                <span className="material-symbols-outlined text-gray-400 !text-sm">{tab.icon}</span>
+                <span className={`material-symbols-outlined !text-sm ${
+                  activeTab === tab.id ? 'text-white' : 'text-teal-500'
+                }`}>{tab.icon}</span>
                 <span>{tab.label}</span>
               </button>
             ))}

@@ -126,37 +126,37 @@ const initialNodes: Node[] = [
 
 const initialEdges: Edge[] = [
   // System prompt to Planner Rules
-  { id: 'e-system-prompt', source: 'system-prompt', sourceHandle: 'output', target: '1', targetHandle: 'systemPrompt', type: 'default' },
+  { id: 'e-system-prompt', source: 'system-prompt', sourceHandle: 'output', target: '1', targetHandle: 'systemPrompt', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
   // Text input to Planner
-  { id: 'e-text-1', source: 'text-1', sourceHandle: 'output', target: '1', targetHandle: 'context', type: 'default' },
+  { id: 'e-text-1', source: 'text-1', sourceHandle: 'output', target: '1', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
   // Web Scraper to Planner Tools
-  { id: 'e3-1', source: '3', sourceHandle: 'output', target: '1', targetHandle: 'tools', type: 'default' },
+  { id: 'e3-1', source: '3', sourceHandle: 'output', target: '1', targetHandle: 'tools', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
   
   // Planner to parallel research agents - connecting to 'context' port
-  { id: 'e1-2', source: '1', sourceHandle: 'output', target: '2', targetHandle: 'context', type: 'default' },
-  { id: 'e1-4', source: '1', sourceHandle: 'output', target: '4', targetHandle: 'context', type: 'default' },
-  { id: 'e1-11', source: '1', sourceHandle: 'output', target: '11', targetHandle: 'context', type: 'default' },
+  { id: 'e1-2', source: '1', sourceHandle: 'output', target: '2', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
+  { id: 'e1-4', source: '1', sourceHandle: 'output', target: '4', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
+  { id: 'e1-11', source: '1', sourceHandle: 'output', target: '11', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
   
   // Research agents directly to Fact Checker - connecting to 'context' port
-  { id: 'e2-5', source: '2', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default' },
-  { id: 'e4-5', source: '4', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default' },
-  { id: 'e11-5', source: '11', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default' },
+  { id: 'e2-5', source: '2', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
+  { id: 'e4-5', source: '4', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
+  { id: 'e11-5', source: '11', sourceHandle: 'output', target: '5', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
   
   // Sequential flow - connecting to 'context' port
-  { id: 'e5-6', source: '5', sourceHandle: 'output', target: '6', targetHandle: 'context', type: 'default' },
+  { id: 'e5-6', source: '5', sourceHandle: 'output', target: '6', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
   
   // Analyst to parallel output generators - connecting to 'context' port
-  { id: 'e6-7', source: '6', sourceHandle: 'output', target: '7', targetHandle: 'context', type: 'default' },
-  { id: 'e6-8', source: '6', sourceHandle: 'output', target: '8', targetHandle: 'context', type: 'default' },
-  { id: 'e6-9', source: '6', sourceHandle: 'output', target: '9', targetHandle: 'context', type: 'default' },
+  { id: 'e6-7', source: '6', sourceHandle: 'output', target: '7', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
+  { id: 'e6-8', source: '6', sourceHandle: 'output', target: '8', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
+  { id: 'e6-9', source: '6', sourceHandle: 'output', target: '9', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
   
     // Output generators to Presenter - connecting to 'context' port
-  { id: 'e7-10', source: '7', sourceHandle: 'output', target: '10', targetHandle: 'context', type: 'default' },
-  { id: 'e8-10', source: '8', sourceHandle: 'output', target: '10', targetHandle: 'context', type: 'default' },
-  { id: 'e9-10', source: '9', sourceHandle: 'output', target: '10', targetHandle: 'context', type: 'default' },
+  { id: 'e7-10', source: '7', sourceHandle: 'output', target: '10', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
+  { id: 'e8-10', source: '8', sourceHandle: 'output', target: '10', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
+  { id: 'e9-10', source: '9', sourceHandle: 'output', target: '10', targetHandle: 'context', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
   
   // Presenter to final Presentation output
-  { id: 'e10-101', source: '10', sourceHandle: 'output', target: '101', type: 'default' },
+  { id: 'e10-101', source: '10', sourceHandle: 'output', target: '101', type: 'default', style: { stroke: '#94a3b8', strokeWidth: 2 } },
    
 ];
 
@@ -246,7 +246,11 @@ function FlowView() {
     
     // Reset all edges to non-animated state first
     setEdges(currentEdges => 
-      currentEdges.map(edge => ({ ...edge, animated: false }))
+      currentEdges.map(edge => ({ 
+        ...edge, 
+        animated: false,
+        style: { stroke: '#94a3b8', strokeWidth: 2 } // Ensure default gray color
+      }))
     );
 
     // Process each wave sequentially with camera following
@@ -270,7 +274,10 @@ function FlowView() {
       setEdges(currentEdges => 
         currentEdges.map(edge => ({
           ...edge,
-          animated: waveEdgeIds.includes(edge.id)
+          animated: waveEdgeIds.includes(edge.id),
+          style: waveEdgeIds.includes(edge.id) 
+            ? { stroke: '#14b8a6', strokeWidth: 3 } // Teal-500 color for animated edges
+            : { stroke: '#94a3b8', strokeWidth: 2 }  // Default gray color
         }))
       );
       
@@ -281,7 +288,8 @@ function FlowView() {
       setEdges(currentEdges => 
         currentEdges.map(edge => ({
           ...edge,
-          animated: false
+          animated: false,
+          style: { stroke: '#94a3b8', strokeWidth: 2 } // Reset to default gray color
         }))
       );
       
@@ -319,18 +327,18 @@ function FlowView() {
           className={`
             flex min-w-30 items-center justify-center space-x-2 px-4 py-2 
             ${isRunning 
-              ? 'bg-gray-500 cursor-not-allowed' 
+              ? 'bg-teal-400/30 cursor-not-allowed shadow-none' 
               : 'bg-teal-600 hover:bg-teal-700 hover:shadow-xl'
             }
-            text-white font-medium text-sm 
-            rounded-lg shadow-lg border border-teal-500
-            transition-colors duration-200
+            text-teal-100 font-medium text-sm 
+            rounded-full shadow-lg border border-teal-500/30
+            transition-all duration-200
           `}
         >
           {isRunning ? (
             <>
-              <span className="material-symbols-outlined text-lg animate-spin">refresh</span>
-              <span>Running...</span>
+              <span className="material-symbols-outlined text-lg animate-spin text-teal-600">refresh</span>
+              <span className="text-teal-600">Running...</span>
             </>
           ) : (
             <>
@@ -359,11 +367,11 @@ function FlowView() {
       
       {/* Success Toast */}
       <Toast.Root 
-        className="bg-teal-600 text-white p-4 rounded-lg shadow-lg border border-teal-500 flex items-center space-x-3"
+        className="bg-teal-600 text-white p-4 rounded-lg shadow-lg border border-teal-500/50 flex items-center space-x-3"
         open={toastOpen} 
         onOpenChange={setToastOpen}
       >
-        <span className="material-symbols-outlined text-lg">celebration</span>
+        <span className="material-symbols-outlined !text-2xl">celebration</span>
         <div>
           <Toast.Title className="font-medium text-sm">
             Workflow Complete!
@@ -373,7 +381,7 @@ function FlowView() {
           </Toast.Description>
         </div>
       </Toast.Root>
-      <Toast.Viewport className="fixed top-4 right-4 z-50 w-80" />
+      <Toast.Viewport className="fixed top-[54px] right-4 z-50 w-80" />
     </div>
     </Toast.Provider>
   );
