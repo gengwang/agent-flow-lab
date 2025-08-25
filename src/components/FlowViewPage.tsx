@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
+import * as Toast from '@radix-ui/react-toast';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -163,7 +164,13 @@ function FlowView() {
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [isRunning, setIsRunning] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
   const { fitView, fitBounds } = useReactFlow();
+  const timerRef = useRef(0);
+
+  useEffect(() => {
+    return () => clearTimeout(timerRef.current);
+  }, []);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -292,11 +299,19 @@ function FlowView() {
     });
     
     setIsRunning(false);
+    
+    // Show success toast
+    setToastOpen(false);
+    window.clearTimeout(timerRef.current);
+    timerRef.current = window.setTimeout(() => {
+      setToastOpen(true);
+    }, 100);
   }, [isRunning, setEdges, executionWaves, getNodesFromWave, calculateBounds, fitBounds, fitView]);
 
   return (
-    <div className="w-full h-full relative">
-      {/* Run Button */}
+    <Toast.Provider swipeDirection="right">
+      <div className="w-full h-full relative">
+        {/* Run Button */}
       <div className="absolute top-4 right-4 z-10">
         <button
           onClick={runWorkflow}
@@ -341,7 +356,26 @@ function FlowView() {
         {/* <MiniMap className="bg-white border border-gray-300 rounded-lg shadow-sm" /> */}
         <Background color="#e2e8f0" gap={16} />
       </ReactFlow>
+      
+      {/* Success Toast */}
+      <Toast.Root 
+        className="bg-teal-600 text-white p-4 rounded-lg shadow-lg border border-teal-500 flex items-center space-x-3"
+        open={toastOpen} 
+        onOpenChange={setToastOpen}
+      >
+        <span className="material-symbols-outlined text-lg">celebration</span>
+        <div>
+          <Toast.Title className="font-medium text-sm">
+            Workflow Complete!
+          </Toast.Title>
+          <Toast.Description className="text-xs text-blue-50 mt-1">
+            Your AI agent workflow has finished successfully.
+          </Toast.Description>
+        </div>
+      </Toast.Root>
+      <Toast.Viewport className="fixed top-4 right-4 z-50 w-80" />
     </div>
+    </Toast.Provider>
   );
 }
 
