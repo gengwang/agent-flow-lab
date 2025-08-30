@@ -2,11 +2,13 @@ import { FlowTemplate } from '../../types/Flow';
 import { researchAnalysisFlow } from './researchAnalysisFlow';
 import { educationalQAFlow } from './educationalQAFlow';
 import { videoCreationFlow } from './videoCreationFlow';
+import { multiAgentCollaborativeFlow } from './multiAgentCollaborativeFlow';
 
 export const flowTemplates: FlowTemplate[] = [
   researchAnalysisFlow,
   educationalQAFlow,
   videoCreationFlow,
+  multiAgentCollaborativeFlow,
 ];
 
 export const getFlowTemplateById = (id: string): FlowTemplate | undefined => {
@@ -30,4 +32,5 @@ export {
   researchAnalysisFlow,
   educationalQAFlow,
   videoCreationFlow,
+  multiAgentCollaborativeFlow,
 };
