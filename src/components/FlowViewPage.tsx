@@ -371,22 +371,12 @@ function FlowView() {
           {flows.length === 0 && (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
               <div className="text-center">
-                <span className="material-symbols-outlined text-6xl text-gray-300 mb-4 block">
+                <span className="material-symbols-outlined !text-6xl text-gray-300 mb-4 block">
                   account_tree
                 </span>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No flows on canvas
-                </h3>
-                <p className="text-gray-500 mb-4 max-w-sm">
+                <p className="text-gray-400 text-2xl mb-4 max-w-md">
                   Select a flow template from the library to get started, or drag and drop one onto the canvas.
                 </p>
-                <div className="flex items-center justify-center space-x-2 text-sm text-gray-400">
-                  <span>Drag</span>
-                  <span className="material-symbols-outlined text-base">drag_indicator</span>
-                  <span>or</span>
-                  <span className="material-symbols-outlined text-base">mouse</span>
-                  <span>click to add</span>
-                </div>
               </div>
             </div>
           )}

@@ -1,3 +1,6 @@
+# ignore everything in the docs folder
+docs/
+
 # Dependencies
 node_modules/
 .pnp
